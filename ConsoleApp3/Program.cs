@@ -118,6 +118,9 @@ namespace Game
             else
                 Console.WriteLine("You have winned!");
 
+            Console.WriteLine("Enter any key to leave");
+            Console.ReadKey();
+
             //_gameObjectsOnLeftCoast = GameObjects.ToList();
             //_gameObjectsOnRightCoast = new List<GameObject>();
             //_gameState = GameState.NotStarted;

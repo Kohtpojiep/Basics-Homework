@@ -376,6 +376,9 @@ namespace Game
         }
         public void WriteGameObjectsThatCanEat(GameObject[] gameObjects)
         {
+            if (CanIBeEatenByMyself(gameObjects) == true)
+                throw new Exception("Объект не может съесть самого себя");
+
             WhatCanEat = gameObjects;
         }
         public bool CanItEatOneOfThem(GameObject[] gameObjects)

@@ -54,8 +54,6 @@ namespace Game
     + PK(ID)
     + Name
 
-    
-    
     */
 
     // Предел - консоль -.-
@@ -78,9 +76,9 @@ namespace Game
         private Places _humanStandsOn = Places.LeftSide;
         private GameState _gameState = GameState.NotStarted;
 
-        private GameObject[] GameObjects { get; set; }
-        private List<GameObject> GameObjectsOnLeftCoast { get; set; }
-        private List<GameObject> GameObjectsOnRightCoast { get; set; }
+        private GameObject[] _gameObjects;
+        private List<GameObject> _gameObjectsOnLeftCoast;
+        private List<GameObject> _gameObjectsOnRightCoast;
 
         /// <summary>
         /// Старт игры, проверка компонентов игры
@@ -90,11 +88,11 @@ namespace Game
             if (_gameState == GameState.Started)
                 throw new Exception("Игра уже была начата");
 
-            if (GameObjects == null)
+            if (_gameObjects == null)
                 throw new Exception("Инициализируйте объекты");
 
-            GameObjectsOnLeftCoast = GameObjects.ToList();
-            GameObjectsOnRightCoast = new List<GameObject>();
+            _gameObjectsOnLeftCoast = _gameObjects.ToList();
+            _gameObjectsOnRightCoast = new List<GameObject>();
             _gameState = GameState.Started;
 
             string resultOfOperation = "Select the move object";
@@ -120,8 +118,8 @@ namespace Game
             else
                 Console.WriteLine("You have winned!");
 
-            //GameObjectsOnLeftCoast = GameObjects.ToList();
-            //GameObjectsOnRightCoast = new List<GameObject>();
+            //_gameObjectsOnLeftCoast = GameObjects.ToList();
+            //_gameObjectsOnRightCoast = new List<GameObject>();
             //_gameState = GameState.NotStarted;
             //_humanStandsOn = Places.LeftSide;
         }
@@ -138,7 +136,7 @@ namespace Game
             Wolf wolf = new Wolf();
             wolf.WriteGameObjectThatCanEat(goat);
 
-            GameObjects = new GameObject[] { cabbage, goat, wolf };
+            _gameObjects = new GameObject[] { cabbage, goat, wolf };
         }
 
         /// <summary>
@@ -164,7 +162,7 @@ namespace Game
                 if (max > 1)
                     throw new Exception("Имеются повторяющиеся типы");
 
-                GameObjects = gameObjects;
+                _gameObjects = gameObjects;
             }
             else
             {
@@ -189,7 +187,7 @@ namespace Game
         /// <returns></returns>
         private string DisplayInfo()
         {
-            if (GameObjectsOnLeftCoast == null && GameObjectsOnRightCoast == null)
+            if (_gameObjectsOnLeftCoast == null && _gameObjectsOnRightCoast == null)
             {
                 return "Nothing to show there";
             }
@@ -198,10 +196,10 @@ namespace Game
             {
                 new string('-', 20),
                 "Left coast:",
-                GetTypeNamesOfGameObjectsArray(GameObjectsOnLeftCoast.ToArray()),
+                GetTypeNamesOfGameObjectsArray(_gameObjectsOnLeftCoast.ToArray()),
                 "\n",
                 "Right coast:",
-                GetTypeNamesOfGameObjectsArray(GameObjectsOnRightCoast.ToArray()),
+                GetTypeNamesOfGameObjectsArray(_gameObjectsOnRightCoast.ToArray()),
                 "\n",
                 $"The human stands on: {GetCurrentPlace()}",
                 new string('-', 20)
@@ -238,7 +236,6 @@ namespace Game
                 }
                 return string.Join(',', result);
             }
-
             return null;
         }
 
@@ -251,9 +248,9 @@ namespace Game
             switch (_humanStandsOn)
             {
                 case Places.LeftSide:
-                    foreach (var gameObject in GameObjectsOnRightCoast)
+                    foreach (var gameObject in _gameObjectsOnRightCoast)
                     {
-                        if (gameObject.CanItEatOneOfThem(GameObjectsOnRightCoast.ToArray()) == true)
+                        if (gameObject.CanItEatOneOfThem(_gameObjectsOnRightCoast.ToArray()) == true)
                         {
                             _gameState = GameState.Losted;
                             BreakTheGame();
@@ -261,9 +258,9 @@ namespace Game
                     }
                     break;
                 case Places.RightSide:
-                    foreach (var gameObject in GameObjectsOnLeftCoast)
+                    foreach (var gameObject in _gameObjectsOnLeftCoast)
                     {
-                        if (gameObject.CanItEatOneOfThem(GameObjectsOnLeftCoast.ToArray()) == true)
+                        if (gameObject.CanItEatOneOfThem(_gameObjectsOnLeftCoast.ToArray()) == true)
                         {
                             _gameState = GameState.Losted;
                             BreakTheGame();
@@ -272,7 +269,7 @@ namespace Game
                     break;
             }
 
-            if (GameObjectsOnLeftCoast.Count == 0)
+            if (_gameObjectsOnLeftCoast.Count == 0)
             {
                 _gameState = GameState.Finished;
                 BreakTheGame();
@@ -292,7 +289,7 @@ namespace Game
                 CheckOppositeCoast();
                 return "Changed place";
             }
-            foreach (var gameObject in GameObjects)
+            foreach (var gameObject in _gameObjects)
             {
                 if (gameObject.GetType().Name.ToLower() == gameObjectTypeName.ToLower())
                 {
@@ -304,7 +301,6 @@ namespace Game
                     return $"Changed place and moved {gameObjectTypeName}";
                 }
             }
-
             return "That name of object was not found";
         }
 
@@ -320,12 +316,12 @@ namespace Game
                 case Places.LeftSide:
                     if (gameObject != null)
                     {
-                        if (GameObjectsOnLeftCoast
+                        if (_gameObjectsOnLeftCoast
                             .Exists(x => x.GetType().Name == gameObject.GetType().Name) == false)
                             return "This object was not found on left coast";
 
-                        GameObjectsOnLeftCoast.Remove(gameObject);
-                        GameObjectsOnRightCoast.Add(gameObject);
+                        _gameObjectsOnLeftCoast.Remove(gameObject);
+                        _gameObjectsOnRightCoast.Add(gameObject);
                     }
                     _humanStandsOn = Places.RightSide;
                     break;
@@ -333,12 +329,12 @@ namespace Game
                 case Places.RightSide:
                     if (gameObject != null)
                     {
-                        if (GameObjectsOnRightCoast
+                        if (_gameObjectsOnRightCoast
                             .Exists(x => x.GetType().Name == gameObject.GetType().Name) == false)
                             return "This object was not found on right coast";
 
-                        GameObjectsOnRightCoast.Remove(gameObject);
-                        GameObjectsOnLeftCoast.Add(gameObject);
+                        _gameObjectsOnRightCoast.Remove(gameObject);
+                        _gameObjectsOnLeftCoast.Add(gameObject);
                     }
                     _humanStandsOn = Places.LeftSide;
                     break;
@@ -346,14 +342,13 @@ namespace Game
                 default:
                     throw new Exception("Человек находится на непредусмотренном месте");
             }
-
             return null;
         }
     }
 
     public abstract class GameObject
     {
-        private GameObject[] WhatCanEat { get; set; }
+        private GameObject[] _whatCanEat { get; set; }
 
         private bool CanIBeEatenByMyself(GameObject[] gameObjects)
         {
@@ -362,31 +357,30 @@ namespace Game
                 if (gameObject.GetType() == this.GetType())
                     return true;
             }
-
             return false;
         }
         public void WriteGameObjectThatCanEat(GameObject gameObject)
         {
-            GameObject[] gameObjects = new[] { gameObject };
+            GameObject[] gameObjects = new GameObject[] { gameObject };
 
             if (CanIBeEatenByMyself(gameObjects) == true)
                 throw new Exception("Объект не может съесть самого себя");
 
-            WhatCanEat = gameObjects;
+            _whatCanEat = gameObjects;
         }
         public void WriteGameObjectsThatCanEat(GameObject[] gameObjects)
         {
             if (CanIBeEatenByMyself(gameObjects) == true)
                 throw new Exception("Объект не может съесть самого себя");
 
-            WhatCanEat = gameObjects;
+            _whatCanEat = gameObjects;
         }
         public bool CanItEatOneOfThem(GameObject[] gameObjects)
         {
-            if (WhatCanEat == null || WhatCanEat.Length == 0)
+            if (_whatCanEat == null || _whatCanEat.Length == 0)
                 return false;
 
-            foreach (var canEatGameObject in WhatCanEat)
+            foreach (var canEatGameObject in _whatCanEat)
             {
                 foreach (var gameObject in gameObjects)
                 {
@@ -433,7 +427,7 @@ namespace Game
             Wolf wolf = new Wolf();
             wolf.WriteGameObjectThatCanEat(goat);
 
-            GameObject[] gameObjects = { cabbage, goat, wolf };
+            GameObject[] gameObjects = new GameObject[] { cabbage, goat, wolf };
             Game game = new Game();
             game.LoadGameObjects(gameObjects);
             game.StartTheGame();

@@ -19,18 +19,22 @@ namespace OOP
         // Что не является икапсуляцией
         private class Pen
         {
-            private string _socksName = "Дружбан";
+            private string _socksName;
             public void RepairMachine() { }
+            public Pen(string socksName)
+            {
+                _socksName = socksName;
+            }
         }
 
         // Пример инкапсуляции
         private class RemoteControllerButton
         {
-            private string Name { get; set; }
+            private string _name;
             private int Number { get; set; }
             public RemoteControllerButton(string name, int number)
             {
-                Name = name;
+                _name = name;
                 Number = number;
             }
             public void Press() { }
@@ -81,7 +85,7 @@ namespace OOP
         private class Animal
         {
             private int _age;
-            private string Name { get; set; }
+            public string Name { get; set; }
             public Animal(int age)
             {
                 _age = age;
@@ -92,7 +96,7 @@ namespace OOP
         {
             private int _age;
             private int _weight;
-            private string Name { get; set; }
+            public string Name { get; set; }
             public DocherniiAnimal(int age, int weight)
             {
                 _age = age;
@@ -212,13 +216,13 @@ namespace OOP
 
             // Пример полиморфизма
             Console.WriteLine("Полиморфизм:");
-            BaseDoings[] connections = { new MSSQL(), new MySQL() };
-            for(int i = 0; i < connections.Length; i++)
+            BaseDoings[] connections = new BaseDoings[] { new MSSQL(), new MySQL() };
+            for (int i = 0; i < connections.Length; i++)
                 connections[i].Open();
 
             Console.WriteLine("Наследование без использования полиморфизма:");
-            NotCoolBaseDoings[] notCoolConnections = { new NotCoolMSSQL(), new NotCoolMySQL() };
-            for(int i = 0; i < notCoolConnections.Length; i++)
+            NotCoolBaseDoings[] notCoolConnections = new NotCoolBaseDoings[] { new NotCoolMSSQL(), new NotCoolMySQL() };
+            for (int i = 0; i < notCoolConnections.Length; i++)
                 notCoolConnections[i].Open();
 
             Console.WriteLine("Hello World!");
